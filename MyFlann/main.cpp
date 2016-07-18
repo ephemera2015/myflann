@@ -8,14 +8,14 @@
 using namespace std;
 
 //浮点输入LSH测试数据集
-const string test_float_flann_base = "siftsmall_base.fvecs";//可改成"sift_base.fvecs"
-const string test_float_flann_query = "siftsmall_query.fvecs";//可改成"sift_query.fvecs"
-const string test_float_flann_truth = "siftsmall_groundtruth.ivecs";//可改成"sift_groundtruth.ivecs"
+const string test_float_flann_base = "data//siftsmall_base.fvecs";
+const string test_float_flann_query = "data//siftsmall_query.fvecs";
+const string test_float_flann_truth = "data//siftsmall_groundtruth.ivecs";
 
 //unsigned char输入LSH测试数据集
-const string test_byte_flann_base = "bytetest_base.bvecs";
-const string test_byte_flann_query = "bytetest_query.bvecs";
-const string test_byte_flann_truth = "bytetest_groundtruth.ivecs";
+const string test_byte_flann_base = "data//bytetest_base.bvecs";
+const string test_byte_flann_query = "data//bytetest_query.bvecs";
+const string test_byte_flann_truth = "data//bytetest_groundtruth.ivecs";
 
 
 void testFloatLSH(ostream& out, vector<int>&table_numbers, vector<int>&key_sizes, vector<float>&scales);
