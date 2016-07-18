@@ -28,7 +28,7 @@ int main()
 		streambuf* old = cout.rdbuf();
 		cout << "测试进行中，请耐心等待..." << endl;
 		//若想将测试结果写入文件，请将下面两行的注释拿掉。
-	   //  ofstream fout("result.txt");
+	        //  ofstream fout("result.txt");
 		// cout.rdbuf(fout.rdbuf());
 
 		
@@ -44,10 +44,10 @@ int main()
 
 		//           测试浮点型输入的LSH 
 
-	//	testFloatLSH(cout, table_numbers, key_sizes, scales);
+		testFloatLSH(cout, table_numbers, key_sizes, scales);
 
 	
-		table_numbers = {500,20,50,80,100,150,200,300,500,800};
+		table_numbers = {20,50,80,100,150,200,300,500,800};
 		key_sizes = {18,20,22,25,28,30,35,40,50,60};
 		scales = { 10.0,30.0,50.0,100.0,200.0,300.0};
 
@@ -57,7 +57,7 @@ int main()
 		
 		cout.rdbuf(old);
 		cout << "测试已结束" << endl;
-	    return 0;
+	       return 0;
 }
 
 
