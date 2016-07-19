@@ -17,7 +17,7 @@ myflann
 		//cout.rdbuf(fout.rdbuf());
 ```
     (2)算法的输入参数有三个：哈希表数量table_number,键值长度key_size(key_size<=64)和查询范围scale
-    (例如要查询100近邻，scale=3.0将会产生300个候选点)，请修改以下部分来测试不同的参数组合下的算法的性能
+    (例如要查询100近邻，scale=3.0将会产生300个候选点)，下面是实验时，我的取值组合。
 ```c++
 		vector<int>table_numbers = {15,20,25,30,40};
 		vector<int>key_sizes = {30,35,40,45,50,55,60};
