@@ -7,7 +7,7 @@
 #include<fstream>
 using namespace std;
 
-//¸¡µãÊäÈëLSH²âÊÔÊı¾İ¼¯
+//æµ®ç‚¹è¾“å…¥LSHæµ‹è¯•æ•°æ®é›†
 const string test_float_flann_base = "data//sift_base.fvecs";
 const string test_float_flann_query = "data//sift_query.fvecs";
 const string test_float_flann_truth = "data//sift_groundtruth.ivecs";
@@ -18,22 +18,22 @@ int main()
 {
 
 		streambuf* old = cout.rdbuf();
-		cout << "²âÊÔ½øĞĞÖĞ£¬ÇëÄÍĞÄµÈ´ı..." << endl;
-		//ÈôÏë½«²âÊÔ½á¹ûĞ´ÈëÎÄ¼ş£¬Çë½«ÏÂÃæÁ½ĞĞµÄ×¢ÊÍÄÃµô¡£
-	    ofstream fout("result.txt");//½«ÔÚ¹¤³ÌÄ¿Â¼ÏÂÉú³Éresult.txtÎÄ¼ş
-		cout.rdbuf(fout.rdbuf());
+		cout << "æµ‹è¯•è¿›è¡Œä¸­ï¼Œè¯·è€å¿ƒç­‰å¾…..." << endl;
+		//è‹¥æƒ³å°†æµ‹è¯•ç»“æœå†™å…¥æ–‡ä»¶ï¼Œè¯·å°†ä¸‹é¢ä¸¤è¡Œçš„æ³¨é‡Šæ‹¿æ‰ã€‚
+	        //ofstream fout("result.txt");//å°†åœ¨å·¥ç¨‹ç›®å½•ä¸‹ç”Ÿæˆresult.txtæ–‡ä»¶
+	       //cout.rdbuf(fout.rdbuf());
 
-		/*			 table_numbers:       ¹şÏ£±íÊıÁ¿
-					 key_sizes:           keyµÄ³¤¶È,  1<=key_size<=64
-					 scales:              ËÑË÷·¶Î§£¬ÀıÈçËÑË÷100½üÁÚ,scale=3Ê±£¬½«»á²úÉú100*3=300¸öºòÑ¡µã£¬
-					 scaleÔ½´óÔò¾«¶ÈÔ½¸ß£¬Ê±¼ä¿ªÏúÔ½´ó£¬scaleÔ½Ğ¡£¬¾«¶ÈÔ½Ğ¡£¬Ê±¼ä¿ªÏúĞ¡
+		/*			 table_numbers:       å“ˆå¸Œè¡¨æ•°é‡
+					 key_sizes:           keyçš„é•¿åº¦,  1<=key_size<=64
+					 scales:              æœç´¢èŒƒå›´ï¼Œä¾‹å¦‚æœç´¢100è¿‘é‚»,scale=10æ—¶ï¼Œå°†ä¼šäº§ç”Ÿ100*10=1000ä¸ªå€™é€‰ç‚¹ï¼Œ
+					 scaleè¶Šå¤§åˆ™ç²¾åº¦è¶Šé«˜ï¼Œæ—¶é—´å¼€é”€è¶Šå¤§ï¼Œscaleè¶Šå°ï¼Œç²¾åº¦è¶Šå°ï¼Œæ—¶é—´å¼€é”€å°
 		*/
 		vector<int>table_numbers = {15,20,25,30,40};
-		vector<int>key_sizes = {30,35,40,45,50,55,60,64};
+		vector<int>key_sizes = {30,35,40,45,50,55,60};
 		vector<float>scales = { 5.0,8.0,10.0,20.0,30,50,80,100,200};
 		testFloatLSH(cout, table_numbers, key_sizes, scales);
 		cout.rdbuf(old);
-		cout << "²âÊÔÒÑ½áÊø" << endl;
+		cout << "æµ‹è¯•å·²ç»“æŸ" << endl;
 	    return 0;
 }
 
@@ -43,26 +43,26 @@ int main()
 void testFloatLSH(ostream& out, vector<int>&table_numbers, vector<int>&key_sizes, vector<float>&scales)
 {
 	int i, j, k;
-	myflann::DataReader<float> floatReader;//¸¡µãÊı¾İ¶ÁÈ¡¶ÔÏó
-	myflann::DataReader<int> intReader;//ÕûÊıÊı¾İ¶ÁÈ¡¶ÔÏó
+	myflann::DataReader<float> floatReader;//æµ®ç‚¹æ•°æ®è¯»å–å¯¹è±¡
+	myflann::DataReader<int> intReader;//æ•´æ•°æ•°æ®è¯»å–å¯¹è±¡
 
-												  //¶ÁÈ¡¸¡µãÊı¾İ²âÊÔ¼¯
+												  //è¯»å–æµ®ç‚¹æ•°æ®æµ‹è¯•é›†
 	int base_cnt, query_cnt, truth_cnt;
-	myflann::Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);//¶ÁÈ¡²âÊÔÊı¾İ¼¯
-	myflann::Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);//¶ÁÈ¡²éÑ¯Êı¾İ¼¯
-	myflann::Matrix<int> truth = intReader.read(test_float_flann_truth, truth_cnt);//¶ÁÈ¡ÊÂÊµ
+	myflann::Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);//è¯»å–æµ‹è¯•æ•°æ®é›†
+	myflann::Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);//è¯»å–æŸ¥è¯¢æ•°æ®é›†
+	myflann::Matrix<int> truth = intReader.read(test_float_flann_truth, truth_cnt);//è¯»å–äº‹å®
 
 
-	out << "******************************¸¡µãÊäÈëµÄLSH²âÊÔ*******************************" << endl;
+	out << "******************************æµ®ç‚¹è¾“å…¥çš„LSHæµ‹è¯•*******************************" << endl;
 	out << endl;
 
 	out << setiosflags(ios::left) << setw(10) << "table_num"
 		<< setiosflags(ios::left) << setw(10) << "key_size"
 		<< setiosflags(ios::left) << setw(8) << "scale"
-		<< setiosflags(ios::left) << setw(8) << "¾«¶È"
-		<< setiosflags(ios::left) << setw(14) << "²éÑ¯ÓÃÊ±ms"
-		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÓÃÊ±ms"
-		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÄÚ´æMB" << endl;
+		<< setiosflags(ios::left) << setw(8) << "ç²¾åº¦"
+		<< setiosflags(ios::left) << setw(14) << "æŸ¥è¯¢ç”¨æ—¶ms"
+		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•ç”¨æ—¶ms"
+		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•å†…å­˜MB" << endl;
 	for (i = 0; i < table_numbers.size(); ++i)
 	{
 		for (j = 0; j < key_sizes.size(); ++j)
@@ -70,19 +70,19 @@ void testFloatLSH(ostream& out, vector<int>&table_numbers, vector<int>&key_sizes
 			clock_t build_start, build_end, search_start, search_end;
 			myflann::LshIndexParams params(table_numbers[i], key_sizes[j]);
 			myflann::Index<myflann::L2<float>> test(base, params);
-			//´´½¨Ë÷Òı,²¢¼ÆÊ±
+			//åˆ›å»ºç´¢å¼•,å¹¶è®¡æ—¶
 			build_start = clock();
 			test.buildIndex();
 			build_end = clock();
 			for (k = 0; k < scales.size(); ++k)
 			{
 				float sum;
-				//²éÑ¯²¢¼ÆÊ±
+				//æŸ¥è¯¢å¹¶è®¡æ—¶
 				vector<vector<int>> indices;
 				vector<vector<float>> dists;
 				myflann::SearchParam param(scales[k], 1000, 1000);
 				search_start = clock();
-				test.knnSearch(query, indices, dists, 100, param);//ÕÒ100½üÁÚ
+				test.knnSearch(query, indices, dists, 100, param);//æ‰¾100è¿‘é‚»
 				search_end = clock();
 				vector<float> precises = myflann::precise(truth, indices);
 				int m;
