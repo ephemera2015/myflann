@@ -108,17 +108,24 @@ namespace myflann
 			{
 				goal = param.scale*knn;
 			}
+			vector<int> cnts;
+			cnts.resize(rows);
 			#pragma omp parallel for
 			for (i = 0; i < rows; ++i)
 			{
 					int j = 0;
+					cnts[i] = 0;
 					table_manager<DistanceType> cand(param.search_table_num, param.search_table_gap);
 					for (j = 0; j < table_number_&&cand.item_cnt<goal; ++j)
 					{
 						tables_[j]->retrieveBucket(queries[i], &cand, goal, distance_);
 					}
-					cnt +=cand.item_cnt;
+					cnts[i] =cand.item_cnt;
 					cand.retrive(dists[i], indices[i], knn,0,true);
+			}
+			for (i = 0; i < cnts.size();++i)
+			{
+				cnt += cnts[i];
 			}
 			return (int)cnt/(float)rows;
 		}

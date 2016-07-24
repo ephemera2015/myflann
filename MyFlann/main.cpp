@@ -6,104 +6,172 @@
 #include<iostream>
 #include<fstream>
 using namespace std;
-
-//æµ®ç‚¹è¾“å…¥LSHæµ‹è¯•æ•°æ®é›†
+using namespace myflann;
+//¸¡µãÊäÈëLSH²âÊÔÊı¾İ¼¯
 const string test_float_flann_base = "data//sift_base.fvecs";
 const string test_float_flann_query = "data//sift_query.fvecs";
 const string test_float_flann_truth = "data//sift_groundtruth.ivecs";
 
-void testFloatLSH(ostream& out, vector<int>&table_numbers, vector<int>&key_sizes, vector<float>&scales);
 
+void test_lsh_precise_time(ostream& out, vector<int>& table_numbers, vector<int>&key_size)
+{
+	DataReader<float> floatReader;
+	DataReader<int>   intReader;
+	int base_cnt;
+	int query_cnt;
+	int truth_cnt;
+	Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);
+	Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);
+	Matrix<int>   truth = intReader.read(test_float_flann_truth, truth_cnt);
+	out << "********************************LSH²âÊÔ*********************************" << endl;
+	out << endl;
+	out << setiosflags(ios::left) << setw(10) << "table_num"
+		<< setiosflags(ios::left) << setw(10) << "key_size"
+		<< setiosflags(ios::left) << setw(8) << "×¼È·ÂÊ"
+		<< setiosflags(ios::left) << setw(14) << "²éÑ¯ÓÃÊ±ms"
+		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÓÃÊ±ms" << endl;
+	int i, j, k;
+	for (i = 0; i < table_numbers.size(); ++i)
+	{
+		for (j = 0; j < key_size.size(); ++j)
+		{
+
+			LshIndexParams p(table_numbers[i], key_size[j]);
+			Index<L2<float>> index(base, p);
+			clock_t search_end, search_begin, build_begin, build_end;
+			build_begin = clock();
+			index.buildIndex();
+			build_end = clock();
+			SearchParam sp(100.0);
+			vector<vector<int>>indices;
+			vector<vector<float>> dists;
+			search_begin = clock();
+			index.knnSearch(query, indices, dists, 1, sp);
+			search_end = clock();
+			out << setiosflags(ios::left) << setw(10) << table_numbers[i];
+			out << setiosflags(ios::left) << setw(10) << key_size[j];
+			out << setiosflags(ios::left) << setw(8) << setiosflags(ios::fixed) << setprecision(3) << precise_rate(truth, indices, 100);
+			out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (search_end - search_begin);
+			out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (build_end - build_begin) << endl;
+		}
+	}
+}
+void test_dsh_precise_time(ostream& out, vector<int>& table_numbers, vector<int>&key_size)
+{
+	DataReader<float> floatReader;
+	DataReader<int>   intReader;
+	int base_cnt;
+	int query_cnt;
+	int truth_cnt;
+	Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);
+	Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);
+	Matrix<int>   truth = intReader.read(test_float_flann_truth, truth_cnt);
+	out << "********************************DSH²âÊÔ*********************************" << endl;
+	out << endl;
+	out << setiosflags(ios::left) << setw(10) << "table_num"
+		<< setiosflags(ios::left) << setw(10) << "key_size"
+		<< setiosflags(ios::left) << setw(8) << "×¼È·ÂÊ"
+		<< setiosflags(ios::left) << setw(14) << "²éÑ¯ÓÃÊ±ms"
+		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÓÃÊ±ms" << endl;
+	int i, j, k;
+	for (i = 0; i < table_numbers.size(); ++i)
+	{
+		for (j = 0; j < key_size.size(); ++j)
+		{
+	
+			DshIndexParams p(table_numbers[i], key_size[j], 1.5, 3, 3);
+			Index<L2<float>> index(base, p);
+			clock_t search_end, search_begin, build_begin, build_end;
+			build_begin = clock();
+			index.buildIndex();
+			build_end = clock();
+			SearchParam sp(100.0);
+			vector<vector<int>>indices;
+			vector<vector<float>> dists;
+			search_begin = clock();
+			index.knnSearch(query, indices, dists, 1, sp);
+			search_end = clock();
+			out << setiosflags(ios::left) << setw(10) << table_numbers[i];
+			out << setiosflags(ios::left) << setw(10) << key_size[j];
+			out << setiosflags(ios::left) << setw(8) << setiosflags(ios::fixed) << setprecision(3) << precise_rate(truth, indices, 100);
+			out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (search_end - search_begin);
+			out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (build_end - build_begin) << endl;
+		}
+	}
+}
+
+void compare_dsh_lsh(ostream& out)
+{
+	DataReader<float> floatReader;
+	DataReader<int>   intReader;
+	int base_cnt;
+	int query_cnt;
+	int truth_cnt;
+	Matrix<float> base  = floatReader.read(test_float_flann_base, base_cnt);
+	Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);
+	Matrix<int>   truth = intReader.read(test_float_flann_truth, truth_cnt);
+
+	int i, j, k;
+
+	clock_t tds, tde, tls, tle;
+	out << "*****************************DSHÓëLSH¶Ô±È²âÊÔ*********************************" << endl;
+	out << endl;
+	vector<int> key_sizes = {8,10,15,17,20,23,25,30,32};
+	out << setiosflags(ios::left) << setw(10) << "key_size"
+		<< setiosflags(ios::left) << setw(10) << "DSH¾«¶È"
+		<< setiosflags(ios::left) << setw(10) << "LSH¾«¶È"
+		<< setiosflags(ios::left) << setw(10) << "DSHºòÑ¡"
+		<< setiosflags(ios::left) << setw(10) << "LSHºòÑ¡"
+		<< setiosflags(ios::left) << setw(10) << "DSHÊ±¼ä"
+		<< setiosflags(ios::left) << setw(10) << "LSHÊ±¼ä" << endl;
+	for (i = 0; i < key_sizes.size();++i)
+	{
+		DshIndexParams pdsh(10, key_sizes[i], 1.5, 3, 3);
+		Index<L2<float>> dsh(base, pdsh);
+		LshIndexParams plsh(10, key_sizes[i]);
+		Index<L2<float>> lsh(base, plsh);
+		dsh.buildIndex();
+		lsh.buildIndex();
+		vector<vector<int>> indices;
+		vector<vector<float>> dists;
+
+		tds = clock();
+		float cand_dsh=dsh.knnSearch(query, indices, dists, 1, SearchParam(20.0));
+		tde = clock();
+		float prs_dsh = precise_rate(truth, indices, 100);
+		indices.clear();
+		dists.clear();
+		tls = clock();
+		float cand_lsh=lsh.knnSearch(query, indices, dists, 1, SearchParam(20.0));
+		tle = clock();
+		float prs_lsh = precise_rate(truth, indices, 100);
+		out << setiosflags(ios::left) << setw(10) << key_sizes[i]
+			<< setiosflags(ios::left) << setw(10) << prs_dsh
+			<< setiosflags(ios::left) << setw(10) << prs_lsh
+			<< setiosflags(ios::left) << setw(10) << cand_dsh
+			<< setiosflags(ios::left) << setw(10) << cand_lsh
+			<< setiosflags(ios::left) << setw(10) << tde-tds
+			<< setiosflags(ios::left) << setw(10) << tle-tls << endl;
+	}
+
+}
 int main()
 {
 
 		streambuf* old = cout.rdbuf();
-		cout << "æµ‹è¯•è¿›è¡Œä¸­ï¼Œè¯·è€å¿ƒç­‰å¾…..." << endl;
-		//è‹¥æƒ³å°†æµ‹è¯•ç»“æœå†™å…¥æ–‡ä»¶ï¼Œè¯·å°†ä¸‹é¢ä¸¤è¡Œçš„æ³¨é‡Šæ‹¿æ‰ã€‚
-	        //ofstream fout("result.txt");//å°†åœ¨å·¥ç¨‹ç›®å½•ä¸‹ç”Ÿæˆresult.txtæ–‡ä»¶
-	       //cout.rdbuf(fout.rdbuf());
-
-		/*			 table_numbers:       å“ˆå¸Œè¡¨æ•°é‡
-					 key_sizes:           keyçš„é•¿åº¦,  1<=key_size<=64
-					 scales:              æœç´¢èŒƒå›´ï¼Œä¾‹å¦‚æœç´¢100è¿‘é‚»,scale=10æ—¶ï¼Œå°†ä¼šäº§ç”Ÿ100*10=1000ä¸ªå€™é€‰ç‚¹ï¼Œ
-					 scaleè¶Šå¤§åˆ™ç²¾åº¦è¶Šé«˜ï¼Œæ—¶é—´å¼€é”€è¶Šå¤§ï¼Œscaleè¶Šå°ï¼Œç²¾åº¦è¶Šå°ï¼Œæ—¶é—´å¼€é”€å°
-		*/
-		vector<int>table_numbers = {15,20,25,30,40};
-		vector<int>key_sizes = {30,35,40,45,50,55,60};
-		vector<float>scales = { 5.0,8.0,10.0,20.0,30,50,80,100,200};
-		testFloatLSH(cout, table_numbers, key_sizes, scales);
+		cout << "²âÊÔ½øĞĞÖĞ£¬ÇëÄÍĞÄµÈ´ı..." << endl;
+		//ÈôÏë½«²âÊÔ½á¹ûĞ´ÈëÎÄ¼ş£¬Çë½«ÏÂÃæÁ½ĞĞµÄ×¢ÊÍÄÃµô¡£
+	    // ofstream fout("result.txt");//½«ÔÚ¹¤³ÌÄ¿Â¼ÏÂÉú³Éresult.txtÎÄ¼ş
+		//cout.rdbuf(fout.rdbuf());
+		vector<int> table_numbers={1,3,5,10,15,20,25};
+		vector<int> key_sizes = {30,33,38,43,50};
+		test_dsh_precise_time(cout, table_numbers,key_sizes);//²âÊÔdshÓĞĞ§ÂÊ
+		table_numbers = {1,3,5,15,20};
+		key_sizes = { 15,20,30,35,40,45 };
+		test_lsh_precise_time(cout,table_numbers,key_sizes);//²âÊÔlshÓĞĞ§ÂÊ
+		compare_dsh_lsh(cout);//²âÊÔdshºÍlsh»ØÊÕÏàÍ¬µãÊı£¬ÓĞĞ§ÂÊµÄ¶Ô±È¹ØÏµ
 		cout.rdbuf(old);
-		cout << "æµ‹è¯•å·²ç»“æŸ" << endl;
+		cout << "²âÊÔÒÑ½áÊø" << endl;
 	    return 0;
-}
-
-
-
-
-void testFloatLSH(ostream& out, vector<int>&table_numbers, vector<int>&key_sizes, vector<float>&scales)
-{
-	int i, j, k;
-	myflann::DataReader<float> floatReader;//æµ®ç‚¹æ•°æ®è¯»å–å¯¹è±¡
-	myflann::DataReader<int> intReader;//æ•´æ•°æ•°æ®è¯»å–å¯¹è±¡
-
-												  //è¯»å–æµ®ç‚¹æ•°æ®æµ‹è¯•é›†
-	int base_cnt, query_cnt, truth_cnt;
-	myflann::Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);//è¯»å–æµ‹è¯•æ•°æ®é›†
-	myflann::Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);//è¯»å–æŸ¥è¯¢æ•°æ®é›†
-	myflann::Matrix<int> truth = intReader.read(test_float_flann_truth, truth_cnt);//è¯»å–äº‹å®
-
-
-	out << "******************************æµ®ç‚¹è¾“å…¥çš„LSHæµ‹è¯•*******************************" << endl;
-	out << endl;
-
-	out << setiosflags(ios::left) << setw(10) << "table_num"
-		<< setiosflags(ios::left) << setw(10) << "key_size"
-		<< setiosflags(ios::left) << setw(8) << "scale"
-		<< setiosflags(ios::left) << setw(8) << "ç²¾åº¦"
-		<< setiosflags(ios::left) << setw(14) << "æŸ¥è¯¢ç”¨æ—¶ms"
-		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•ç”¨æ—¶ms"
-		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•å†…å­˜MB" << endl;
-	for (i = 0; i < table_numbers.size(); ++i)
-	{
-		for (j = 0; j < key_sizes.size(); ++j)
-		{
-			clock_t build_start, build_end, search_start, search_end;
-			myflann::LshIndexParams params(table_numbers[i], key_sizes[j]);
-			myflann::Index<myflann::L2<float>> test(base, params);
-			//åˆ›å»ºç´¢å¼•,å¹¶è®¡æ—¶
-			build_start = clock();
-			test.buildIndex();
-			build_end = clock();
-			for (k = 0; k < scales.size(); ++k)
-			{
-				float sum;
-				//æŸ¥è¯¢å¹¶è®¡æ—¶
-				vector<vector<int>> indices;
-				vector<vector<float>> dists;
-				myflann::SearchParam param(scales[k], 1000, 1000);
-				search_start = clock();
-				test.knnSearch(query, indices, dists, 100, param);//æ‰¾100è¿‘é‚»
-				search_end = clock();
-				vector<float> precises = myflann::precise(truth, indices);
-				int m;
-				for (m = 0; m < precises.size(); ++m)
-				{
-					sum += precises[m];
-				}
-				sum /= precises.size();
-				out << setiosflags(ios::left) << setw(10) << table_numbers[i];
-				out << setiosflags(ios::left) << setw(10) << key_sizes[j];
-				out << setiosflags(ios::left) << setw(8) << setiosflags(ios::fixed) << setprecision(2) << scales[k];
-				out << setiosflags(ios::left) << setw(8) << setiosflags(ios::fixed) << setprecision(3) << sum / 100;
-				out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (search_end - search_start);
-				out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << (build_end - build_start);
-				out << setiosflags(ios::left) << setw(14) << setiosflags(ios::fixed) << setprecision(2) << test.usedMemory() / (float(1024) * 1024) << endl;
-			}
-		}
-	}
-	out << endl;
-	delete base.ptr();
-	delete query.ptr();
-	delete truth.ptr();
 }
 

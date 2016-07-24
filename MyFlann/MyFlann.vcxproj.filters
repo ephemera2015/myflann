@@ -53,5 +53,14 @@
     <ClInclude Include="test.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MyFlann\util\kmeans.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFlann\algorithms\dsh_index.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFlann\util\dsh_table.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

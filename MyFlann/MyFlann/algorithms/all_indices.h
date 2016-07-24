@@ -5,6 +5,7 @@
 
 #include "nn_index.h"
 #include "lsh_index.h"
+#include"dsh_index.h"
 #include<iostream>
 
 namespace myflann
@@ -22,6 +23,9 @@ namespace myflann
 		switch (index_type) {
 		case FLANN_LSH_TYPE:
 			nnIndex =new  LshIndex<Distance>(dataset, params, distance);
+			break;
+		case FLANN_DSH_TYPE:
+			nnIndex = new  DshIndex<Distance>(dataset, params, distance);
 			break;
 		default:
 			nnIndex = NULL;

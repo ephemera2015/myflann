@@ -10,30 +10,72 @@
 using namespace std;
 namespace myflann
 {
-	
-	vector<float> precise(Matrix<int>& truth, vector<vector<int>>&found)
+
+	void precise_recall_rate(Matrix<int>&truth, vector<vector<int>>&found,float& precise,float& recall,int cnt)
 	{
-		vector<float> rates;
 		int i, j, k;
-
-		for (i = 0; i < truth.rows; ++i)
+		int found_cnt = 0;
+		int total_cnt = 0;
+		for (i = 0; i < found.size();++i)
 		{
-			int cnt = 0;
-			for (j = 0; j < found[i].size(); ++j)
+			total_cnt += found[i].size();
+			for (j = 0; j < found[i].size()&&j<cnt;++j)
 			{
-
-				for (k = 0; k < 100; ++k)
+				
+				for (k = 0; k < cnt;++k)
 				{
 					if (found[i][j] == truth[i][k])
 					{
-						cnt++;
+						found_cnt++;
 					}
 				}
 			}
-			rates.push_back(cnt);
 		}
+		recall= found_cnt / ((float)cnt*found.size());
+		precise =found_cnt/(float)total_cnt ;
+	}
+	float precise_rate(Matrix<int>&truth,vector<vector<int>>&found,int cnt)
+	{
+		int i, j, k;
+		int truth_cnt = 0;
+		//int found_cnt = 0;
+		for (i = 0; i < found.size();++i)
+		{
+		//	cout << found[i].size() << endl;
+			//found_cnt += found[i].size();
+			for (k = 0; k < found[i].size()&&k<cnt;++k)
+			{
+				for (j = 0; j < cnt; ++j)
+				{
+					if (found[i][k] == truth[i][j])
+					{
+						truth_cnt++;
+						break;
+					}
+				}
+			}
+		}
+		return truth_cnt/((float)found.size());
+	}
+	float precise(Matrix<int>& truth, vector<vector<int>>&found,int knn)
+	{
+		int i, j, k;
+		float rates = 0.0;
+		for (i = 0; i < truth.rows; ++i)
+		{
+			for (j = 0; j < found[i].size()&&j<knn; ++j)
+			{
 
-		return rates;
+				for (k = 0; k < knn; ++k)
+				{
+					if (found[i][j] == truth[i][k])
+					{
+						rates=rates+1;
+					}
+				}
+			}
+		}
+		return rates/(knn*truth.rows);
 	}
 	template<typename BaseType>
 	class DataReader

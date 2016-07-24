@@ -24,7 +24,7 @@ namespace myflann
 		float scale;
 		int   search_table_num;
 		int   search_table_gap;
-		SearchParam(float scale_, int search_table_num_, int search_table_gap_) :
+		SearchParam(float scale_=3.0, int search_table_num_=1000, int search_table_gap_=1000) :
 			scale(scale_),search_table_num(search_table_num_),search_table_gap(search_table_gap_)
 		{}
 	};

@@ -15,6 +15,7 @@ namespace myflann
 	enum flann_algorithm_t
 	{
 		FLANN_LSH_TYPE = 0,
+		FLANN_DSH_TYPE = 1
 	};
 
 	template<typename T>
