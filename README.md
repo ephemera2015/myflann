@@ -7,6 +7,7 @@ my fast library of  approximate nearest neighbor search
     (1)clone本项目到本地
     (2)自行下载ANN_SIFT1M测试数据集放到data/文件夹下（因为这个文件有点大，所以没有上传）
     (3)使用新版的visual studio 打开根目录下工程文件Myflann.sln
+   （4）bian'y编译xuan'x选项xuan'z选项选择64位，并添加openmp支持  
     (4)编译运行
   
 为了是您更好的理解测试过程，下面就main.cpp中测试代码进行说明：
