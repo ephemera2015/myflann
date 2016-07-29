@@ -7,7 +7,7 @@
 #include<fstream>
 using namespace std;
 using namespace myflann;
-//¸¡µãÊäÈëLSH²âÊÔÊı¾İ¼¯
+//æµ®ç‚¹è¾“å…¥LSHæµ‹è¯•æ•°æ®é›†
 const string test_float_flann_base = "data//sift_base.fvecs";
 const string test_float_flann_query = "data//sift_query.fvecs";
 const string test_float_flann_truth = "data//sift_groundtruth.ivecs";
@@ -23,14 +23,14 @@ void test_lsh_precise_time(ostream& out, vector<int>& table_numbers, vector<int>
 	Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);
 	Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);
 	Matrix<int>   truth = intReader.read(test_float_flann_truth, truth_cnt);
-	out << "********************************LSH²âÊÔ*********************************" << endl;
+	out << "********************************LSHæµ‹è¯•*********************************" << endl;
 	out << endl;
 	out << setiosflags(ios::left) << setw(10) << "table_num"
 		<< setiosflags(ios::left) << setw(10) << "key_size"
 		<< setiosflags(ios::left) << setw(10) << "scales"
-		<< setiosflags(ios::left) << setw(8) << "×¼È·ÂÊ"
-		<< setiosflags(ios::left) << setw(14) << "²éÑ¯ÓÃÊ±ms"
-		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÓÃÊ±ms" << endl;
+		<< setiosflags(ios::left) << setw(8) << "å‡†ç¡®ç‡"
+		<< setiosflags(ios::left) << setw(14) << "æŸ¥è¯¢ç”¨æ—¶ms"
+		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•ç”¨æ—¶ms" << endl;
 	int i, j, k;
 	for (i = 0; i < table_numbers.size(); ++i)
 	{
@@ -72,14 +72,14 @@ void test_dsh_precise_time(ostream& out, vector<int>& table_numbers, vector<int>
 	Matrix<float> base = floatReader.read(test_float_flann_base, base_cnt);
 	Matrix<float> query = floatReader.read(test_float_flann_query, query_cnt);
 	Matrix<int>   truth = intReader.read(test_float_flann_truth, truth_cnt);
-	out << "********************************DSH²âÊÔ*********************************" << endl;
+	out << "********************************DSHæµ‹è¯•*********************************" << endl;
 	out << endl;
 	out << setiosflags(ios::left) << setw(10) << "table_num"
 		<< setiosflags(ios::left) << setw(10) << "key_size"
 		<< setiosflags(ios::left) << setw(10) << "scales"
-		<< setiosflags(ios::left) << setw(8) << "×¼È·ÂÊ"
-		<< setiosflags(ios::left) << setw(14) << "²éÑ¯ÓÃÊ±ms"
-		<< setiosflags(ios::left) << setw(14) << "Ë÷ÒıÓÃÊ±ms" << endl;
+		<< setiosflags(ios::left) << setw(8) << "å‡†ç¡®ç‡"
+		<< setiosflags(ios::left) << setw(14) << "æŸ¥è¯¢ç”¨æ—¶ms"
+		<< setiosflags(ios::left) << setw(14) << "ç´¢å¼•ç”¨æ—¶ms" << endl;
 	int i, j, k;
 	for (i = 0; i < table_numbers.size(); ++i)
 	{
@@ -116,17 +116,16 @@ int main()
 {
 
 		streambuf* old = cout.rdbuf();
-		cout << "²âÊÔ½øĞĞÖĞ£¬ÇëÄÍĞÄµÈ´ı..." << endl;
-		//ÈôÏë½«²âÊÔ½á¹ûĞ´ÈëÎÄ¼ş£¬Çë½«ÏÂÃæÁ½ĞĞµÄ×¢ÊÍÄÃµô¡£
-	    //ofstream fout("result.txt");//½«ÔÚ¹¤³ÌÄ¿Â¼ÏÂÉú³Éresult.txtÎÄ¼ş
+		cout << "æµ‹è¯•è¿›è¡Œä¸­ï¼Œè¯·è€å¿ƒç­‰å¾…..." << endl;
+		//è‹¥æƒ³å°†æµ‹è¯•ç»“æœå†™å…¥æ–‡ä»¶ï¼Œè¯·å°†ä¸‹é¢ä¸¤è¡Œçš„æ³¨é‡Šæ‹¿æ‰ã€‚
+	    //ofstream fout("result.txt");//å°†åœ¨å·¥ç¨‹ç›®å½•ä¸‹ç”Ÿæˆresult.txtæ–‡ä»¶
 		//cout.rdbuf(fout.rdbuf());
 		vector<int> table_numbers={80};
 		vector<int> key_sizes = {15,23,30,38,45,50,56,64};
 		vector<float> scales = { 1.0,5.0,10.0,20.0,30.0,50.0};
-		test_dsh_precise_time(cout, table_numbers,key_sizes,scales);//²âÊÔdshÓĞĞ§ÂÊ
-		test_lsh_precise_time(cout,table_numbers,key_sizes,scales);//²âÊÔlshÓĞĞ§ÂÊ
+		test_dsh_precise_time(cout, table_numbers,key_sizes,scales);//æµ‹è¯•dshæœ‰æ•ˆç‡
 		cout.rdbuf(old);
-		cout << "²âÊÔÒÑ½áÊø" << endl;
+		cout << "æµ‹è¯•å·²ç»“æŸ" << endl;
 	    return 0;
 }
 
