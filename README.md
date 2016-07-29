@@ -19,15 +19,17 @@ const string test_float_flann_truth = "data//sift_groundtruth.ivecs";
 ```
     (2)下面是main函数中的代码
 ```c++
-streambuf* old = cout.rdbuf();
-		cout << "测试进行中，请耐心等待..." << endl;
-		//若想将测试结果写入文件，请将下面两行的注释拿掉。
-	        //ofstream fout("result.txt");//将在工程目录下生成result.txt文件
-		//cout.rdbuf(fout.rdbuf());
-		vector<int> table_numbers={80};//指定哈希表数量，太大可能会内存不足
-		vector<int> key_sizes = {15,23,30,38,45,50,56,64};//指定键长度
-		vector<float> scales = { 1.0,5.0,10.0,20.0,30.0,50.0};//指定scales
-		test_dsh_precise_time(cout, table_numbers,key_sizes,scales);//测试dsh有效率
-		cout.rdbuf(old);
-		cout << "测试已结束" << endl;
+ 		streambuf* old = cout.rdbuf(); 
+		cout << "测试进行中，请耐心等待..." << endl; 
+ 		//若想将测试结果写入文件，请将下面两行的注释拿掉。 
+ 	    	//ofstream fout("result.txt");//将在工程目录下生成result.txt文件 
+		//cout.rdbuf(fout.rdbuf()); 
+ 		vector<int> table_numbers={80}; 
+ 		vector<int> key_sizes = {15,23,30,38,45,50,56}; 
+ 		vector<float> scales = { 1.0,5.0,10.0,20.0,30.0}; 
+ 		test_dsh_precise_time(cout, table_numbers,key_sizes,scales);//测试dsh有效率 
+ 		cout.rdbuf(old); 
+ 		cout << "测试已结束" << endl; 
+ 	    	return 0; 
+
 ```
