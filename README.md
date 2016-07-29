@@ -1,7 +1,5 @@
 # myflann
 my fast library of  approximate nearest neighbor search
-
-第一次使用github也是第一次写readme，不规范之处还请批评指正！
 ------------------------------------------------------------
 
 程序编译运行方法
@@ -21,24 +19,15 @@ const string test_float_flann_truth = "data//sift_groundtruth.ivecs";
 ```
     (2)下面是main函数中的代码
 ```c++
-		streambuf* old = cout.rdbuf();
+streambuf* old = cout.rdbuf();
 		cout << "测试进行中，请耐心等待..." << endl;
 		//若想将测试结果写入文件，请将下面两行的注释拿掉。
-	  // ofstream fout("result.txt");//将在工程目录下生成result.txt文件
+	        //ofstream fout("result.txt");//将在工程目录下生成result.txt文件
 		//cout.rdbuf(fout.rdbuf());
-		
-		//以下两行指明了dsh测试时使用的参数
-		vector<int> table_numbers={1,3,5,10,15,20,25};
-		vector<int> key_sizes = {30,33,38,43,50};
-		test_dsh_precise_time(cout, table_numbers,key_sizes);//测试dsh有效率
-		//以下两行指明了lsh测试时使用的参数
-		table_numbers = {1,3,5,15,20};
-		key_sizes = { 15,20,30,35,40,45 };
-		test_lsh_precise_time(cout,table_numbers,key_sizes);//测试lsh有效率
-		
-		//下面的函数调用是比较dsh和lsh回收相同点数，有效率的对比关系
-		compare_dsh_lsh(cout);
+		vector<int> table_numbers={80};//指定哈希表数量，太大可能会内存不足
+		vector<int> key_sizes = {15,23,30,38,45,50,56,64};//指定键长度
+		vector<float> scales = { 1.0,5.0,10.0,20.0,30.0,50.0};//指定scales
+		test_dsh_precise_time(cout, table_numbers,key_sizes,scales);//测试dsh有效率
 		cout.rdbuf(old);
 		cout << "测试已结束" << endl;
-	        return 0;
 ```
